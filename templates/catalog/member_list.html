@@ -1,0 +1,71 @@
+{% extends 'base.html' %} {% block title %}Drop List{% endblock title %} {% block breadcrumbs %}
+<div class="breadcrumbs">
+    <div class="breadcrumbs-inner">
+        <div class="row m-0">
+            <div class="col-sm-4">
+                <div class="page-header float-left">
+                    <div class="page-title">
+                        <h1>Dashboard</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="page-header float-right">
+                    <div class="page-title">
+                        <ol class="breadcrumb text-right">
+                            <li><a href="#">Dashboard</a></li>
+                            <li><a href="#">Member</a></li>
+                            <li class="active">List</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock breadcrumbs %} {% block content %}
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="box-title">Member List </h4>
+            </div>
+            <div class="card-body--">
+                <div class="table-stats order-table ov-h">
+                    <table class="table ">
+                        <thead>
+                            <tr>
+                                <th class="serial">S.N</th>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>User ID</th>
+                                <th>Created Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if memberlist %} {% for member_list in memberlist %}
+                            <tr>
+                                <td class="serial">{{ member_list.id }}</td>
+                                <td>{{ member_list.first_name }} {{ member_list.last_name }}</td>
+                                <td>{{ member_list.email }}</td>
+                                <td>{{ member_list.id }}</td>
+                                <td>{{ member_list.created_at }}</td>
+                            </tr>
+                            {% endfor %} {% else %}
+                            <tr>
+                                <td>No Drop Data</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.table-stats -->
+            </div>
+        </div>
+        <!-- /.card -->
+    </div>
+    <!-- /.col-lg-8 -->
+
+
+</div>
+{% endblock content %}
