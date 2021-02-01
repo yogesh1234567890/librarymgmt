@@ -1,37 +1,65 @@
-<aside id="left-panel" class="left-panel">
-    <nav class="navbar navbar-expand-sm navbar-default">
-        <div id="main-menu" class="main-menu collapse navbar-collapse">
-            <ul class="nav navbar-nav">
-                <li class="active">
-                    <a href="{% url 'dashboard' %}"><i class="menu-icon fa fa-laptop"></i>Dashboard </a>
-                </li>
-                <li class="menu-title">My Store</li>
-                <!-- /.menu-title -->
-                <li class="menu-item-has-children dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-paper-plane"></i>Issue</a>
-                    <ul class="sub-menu children dropdown-menu">
-                        <li><i class="fa fa-id-card-o"></i><a href="{% url 'book_issue' %}">Add</a></li>
-                        <li><i class="fa fa-th"></i><a href="{% url 'book_issue_list' %}">View</a></li>
+<!-- Main Sidebar Container -->
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="{% url 'dashboard' %}" class="brand-link">{{ school_name | default:"MySchool" }}</a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <li class="nav-header">Library Management</li>
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-table"></i>
+                        <p>
+                            Book Transaction
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{% url 'book_issue_list' %}" class="nav-link">
+                                <i class="nav-icon fas fa-cart-plus"></i>
+                                <p>Issue</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'book_return_list' %}" class="nav-link">
+                                <i class="nav-icon fas fa-long-arrow-alt-left"></i>
+                                <p>Return</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'book_renew_list' %}" class="nav-link">
+                                <i class="nav-icon fas fa-history"></i>
+                                <p>Renew</p>
+                            </a>
+                        </li>
                     </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'member_list' %}" class="nav-link">
+                        <i class="nav-icon fa fa-users"></i>
+                        <p>
+                            Members
+                        </p>
+                    </a>
                 </li>
 
-                <li class="menu-item-has-children dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-users"></i>Member</a>
-                    <ul class="sub-menu children dropdown-menu">
-                        <li><i class="fa fa-id-card-o"></i><a href="{% url 'add_member' %}">Add</a></li>
-                        <li><i class="fa fa-th"></i><a href="{% url 'member_list' %}">View</a></li>
-                    </ul>
-                </li>
 
-                <li class="menu-item-has-children dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-archive"></i>Books</a>
-                    <ul class="sub-menu children dropdown-menu">
-                        <li><i class="fa fa-id-card-o"></i><a href="{% url 'add_book' %}">Add</a></li>
-                        <li><i class="fa fa-th"></i><a href="{% url 'book_list' %}">View</a></li>
-                    </ul>
+                <li class="nav-item">
+                    <a href="{% url 'book_list' %}" class="nav-link">
+                        <i class="nav-icon fa fa-archive"></i>
+                        <p>
+                            Books
+                        </p>
+                    </a>
                 </li>
             </ul>
-        </div>
-        <!-- /.navbar-collapse -->
-    </nav>
+        </nav>
+        <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
 </aside>

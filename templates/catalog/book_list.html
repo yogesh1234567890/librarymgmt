@@ -1,80 +1,108 @@
-{% extends 'base.html' %} {% block title %}Book List{% endblock title %} {% block breadcrumbs %}
-<div class="breadcrumbs">
-    <div class="breadcrumbs-inner">
-        <div class="row m-0">
-            <div class="col-sm-4">
-                <div class="page-header float-left">
-                    <div class="page-title">
-                        <h1>Book List</h1>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-8">
-                <div class="page-header float-right">
-                    <div class="page-title">
-                        <ol class="breadcrumb text-right">
-                            <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
-                            <li><a href="#">Book</a></li>
-                            <li class="active">List</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+{% extends 'base.html' %} {% block title %}Books{% endblock title %} {% block breadcrumb %}
+<a class="btn btn-primary" href="{% url 'add_book' %}"><i
+    class="fas fa-plus"></i> Add Book</a> {% endblock breadcrumb %} {% block content %}
+<div class="table-responsive">
+    <table id="librarytable" class="table table-bordered table-striped" data-page-length='100'>
+        <thead class="thead-light">
+            <tr>
+                <th class="serial">#</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Book Type</th>
+                <th>Status</th>
+                <th>Created At</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if book_list %}
+            <tr class='clickable-row' data-href="#">
+                {% for booklist in book_list %}
+                <td class="serial">{{ forloop.counter }}</td>
+                <td>{{ booklist.title }}</td>
+                <td>{{ booklist.author }}</td>
+                <td>{{ booklist.genre }}</td>
+                <td>total: {{ booklist.total_copies}} copies <br> available: {{ booklist.available_copies}} copies</td>
+                <td>{{ booklist.created_at }}</td>
+                <td>
+                    <a href="{% url 'view_book' booklist.isbn %}" class="btn btn-xs btn-success"><i class="fas fa-info"></i></a>
+                    <a href="{% url 'edit_book' booklist.isbn %}" class="btn btn-xs btn-warning"><i class="fas fa-edit"></i></a>
+                    <a href="{% url 'del_book' booklist.isbn %}" class="btn btn-xs btn-danger"><i class="fas fa-xs fa-trash-alt"></i></a>
+                </td>
+            </tr>
+            {% endfor %} {% else %}
+            <tr>
+                <td>No Book Data Found</td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
 </div>
-{% endblock breadcrumbs %} {% block content %}
-<div class="row">
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-body--">
-                <div class="table-stats order-table ov-h">
-                    <table data-toggle="table" data-sort-name="date" data-sort-order="desc">
-                        <thead>
-                            <tr>
-                                <th class="serial">S.N</th>
-                                <th>ISBN</th>
-                                <th>Title</th>
-                                <th>Author</th>
-                                <th>Book Type</th>
-                                <th>Language</th>
-                                <th>Status</th>
-                                <th>Created At</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% if book_list %}
-                            <tr>
-                                {% for booklist in book_list %}
-                                <td class="serial">{{ forloop.counter }}</td>
-                                <td>{{ booklist.isbn }}</td>
-                                <td>{{ booklist.title }}</td>
-                                <td>{{ booklist.author }}</td>
-                                <td>{{ booklist.genre }}</td>
-                                <td>{{ booklist.language }}</td>
-                                <td>total: {{ booklist.total_copies}} copies available: {{ booklist.available_copies}} copies</td>
-                                <td>{{ booklist.created_at }}</td>
-                                <td>
-                                    <a href="{% url 'edit_book' booklist.isbn %}" class="btn btn-xs btn-success"><i class="fas fa-user"></i></a>
-                                    <a href="" class="btn btn-xs btn-danger"><i class="fas fa-xs fa-trash-alt"></i></a>
-                                </td>
-                            </tr>
-                            {% endfor %} {% else %}
-                            <tr>
-                                <td>No Book Data Found</td>
-                            </tr>
-                            {% endif %}
-                        </tbody>
-                    </table>
-                </div>
-                <!-- /.table-stats -->
-            </div>
-        </div>
-        <!-- /.card -->
-    </div>
-    <!-- /.col-lg-8 -->
+{% endblock content %} {% block morejs %}
+<script>
+    $('#librarytable').DataTable({
+        dom: 'lBfrtip', //if i use buttons then entries goes away
+        pagingType: "full_numbers",
+
+        buttons: [{
+                'extend': 'copy',
+                'text': '<i class="fas fa-copy" aria-hidden="true"></i> Copy',
+
+                'className': 'btn-datatables', //button css does not work
 
 
-</div>
-{% endblock content %}
+
+            }, {
+                extend: 'excel',
+                text: '<i class="fas fa-file-excel" aria-hidden="true"></i> Excel',
+                'className': 'btn-datatables',
+
+
+            }, {
+                extend: 'csv',
+                text: '<i class="fas fa-file-csv" aria-hidden="true"></i> CSV',
+                'className': 'btn-datatables',
+
+
+            }, {
+                extend: 'pdf',
+                text: '<i class="fas fa-file-pdf" aria-hidden="true"></i> PDF',
+                'className': 'btn-datatables',
+
+
+            },
+            /*
+                {
+                extend: 'print',
+                text: '<i class="fas fa-print" aria-hidden="true"></i> Print',
+                'className': 'btn-datatables',
+    
+    
+                }
+                */
+
+        ],
+
+        //for checkbox
+        columnDefs: [{
+                orderable: false,
+
+                className: 'select-checkbox',
+                targets: 0,
+
+            },
+
+        ],
+
+        select: {
+            style: 'multi',
+            // selector: 'td:first-child'
+
+        },
+        order: [
+            [1, 'asc']
+        ],
+    });
+</script>
+
+{% endblock morejs %}

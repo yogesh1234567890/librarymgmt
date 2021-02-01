@@ -6,10 +6,6 @@ class BookForm(forms.ModelForm):
         model = BookEntry
         fields = '__all__'
 
-class BookIssueForm(forms.ModelForm):
-    class Meta:
-        model = BookIssue
-        exclude = ['issue_date', 'return_date']
 
 class LoginForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(attrs={
@@ -91,6 +87,7 @@ class BookIssueForm(forms.ModelForm):
     class Meta:
         model = BookIssue
         fields = '__all__'
+        exclude = ['issue_date']
         widgets = {
             'issue_book_name': forms.TextInput(attrs={'class': 'form-control', 'id': 'issue_book_name'}),
             'isbn': forms.Select(attrs={'class': 'form-control', 'id': 'isbn'}),
@@ -98,56 +95,35 @@ class BookIssueForm(forms.ModelForm):
             'member_id': forms.Select(attrs={'class': 'form-control', 'id': 'member_id'}),
         }
 
-'''
-class AddMemberForm(forms.Form):
-    first_name = forms.CharField(widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'id': 'first_name',
-        'data-val': 'true',
-        'data-val-required': 'Please enter first name',
-    }))
-    last_name = forms.CharField(widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'id': 'last_name',
-        'data-val': 'true',
-        'data-val-required': 'Please enter last name',
-    }))
-    email = forms.CharField(widget=forms.EmailInput(attrs={
-        'class': 'form-control',
-        'id': 'email',
-        'data-val': 'true',
-        'data-val-required': 'Please enter email',
-    }))
-    avatar = forms.ImageField(widget=forms. FileInput(attrs={
-        'class': 'form-control',
-        'id': 'email',
-        'data-val': 'true',
-        'data-val-required': 'Please enter email',
-    }))
-    username = forms.CharField(widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'id': 'username',
-        'data-val': 'true',
-        'data-val-required': 'Please enter username',
-    }))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={
-        'class': 'form-control',
-        'id': 'password',
-        'data-val': 'true',
-        'data-val-required': 'Please enter password',
-    }))
-    retype_password = forms.CharField(widget=forms.PasswordInput(attrs={
-        'class': 'form-control',
-        'id': 'retype_password',
-        'data-val': 'true',
-        'data-val-required': 'Please enter retype_password',
-    }))
-'''
+class BookReturnForm(forms.ModelForm):
+    class Meta:
+        model = BookReturn
+        exclude = ['return_date', 'created_at']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control', 'id': 'title'}),
+            'isbn': forms.Select(attrs={'class': 'form-control', 'id': 'isbn'}),
+            'member_name': forms.TextInput(attrs={'class': 'form-control', 'id': 'member_name'}),
+            'member_id': forms.Select(attrs={'class': 'form-control', 'id': 'member_id'}),
+        }
+
+class BookRenewForm(forms.ModelForm):
+    class Meta:
+        model = BookRenew
+        fields = '__all__'
+        exclude = ['renew_date', 'created_at']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control', 'id': 'title'}),
+            'isbn': forms.Select(attrs={'class': 'form-control', 'id': 'isbn'}),
+            'member_name': forms.TextInput(attrs={'class': 'form-control', 'id': 'member_name'}),
+            'member_id': forms.Select(attrs={'class': 'form-control', 'id': 'member_id'}),
+        }
+
+
 class AddMemberForm(forms.ModelForm):
     class Meta:
         model = Member
         fields = '__all__'
-        exclude = ['user',]
+        exclude = ('user',)
     first_name = forms.CharField(widget=forms.TextInput(attrs={
         'class': 'form-control',
         'id': 'first_name',
@@ -189,4 +165,34 @@ class AddMemberForm(forms.ModelForm):
         'id': 'retype_password',
         'data-val': 'true',
         'data-val-required': 'Please enter retype_password',
+    }))
+
+class EditMemberForm(forms.ModelForm):
+    class Meta:
+        model = Member
+        fields = '__all__'
+        exclude = ('user',)
+    first_name = forms.CharField(widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'id': 'first_name',
+        'data-val': 'true',
+        'data-val-required': 'Please enter first name',
+    }))
+    last_name = forms.CharField(widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'id': 'last_name',
+        'data-val': 'true',
+        'data-val-required': 'Please enter last name',
+    }))
+    email = forms.CharField(widget=forms.EmailInput(attrs={
+        'class': 'form-control',
+        'id': 'email',
+        'data-val': 'true',
+        'data-val-required': 'Please enter email',
+    }))
+    avatar = forms.ImageField(widget=forms. FileInput(attrs={
+        'class': 'form-control',
+        'id': 'email',
+        'data-val': 'true',
+        'data-val-required': 'Please enter email',
     }))

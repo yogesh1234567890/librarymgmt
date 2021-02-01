@@ -1,10 +1,11 @@
-from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse, reverse_lazy
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import UpdateView, DeleteView
 from .models import *
 from .forms import *
-# Create your views here.
+
+#----------------------------------------- login and logour views --------------------------------------
 def login_page(request):
     forms = LoginForm()
     if request.method == 'POST':
@@ -24,18 +25,12 @@ def logout_page(request):
     logout(request)
     return redirect('login')
 
+
+# ----------------------------- Book CRUD views ------------------------------------------
 def book_list(request):
     book_list = BookEntry.objects.all()
-    return render(request, 'catalog/book_list.html', {'book_list':book_list})
-
-def member_list(request):
-    memberlist = Member.objects.all()
-    return render(request, 'catalog/member_list.html', {'memberlist': memberlist})
-
-def book_issue_list(request):
-    book_issue = BookIssue. objects.all()
-    return render(request, 'catalog/book_issued_list.html', {'book_issue': book_issue})
-        
+    return render(request, 'catalog/book_list.html', {'book_list': book_list})
+    
 def add_book(request):
     if not request.user.is_superuser:
         return redirect('login')
@@ -50,71 +45,6 @@ def add_book(request):
     }
     return render(request, 'catalog/add_book.html', context=context)
 
-def book_issue(request):
-    if not request.user.is_superuser:
-        return redirect('login')
-    form = BookIssueForm()
-    if request.method == 'POST':
-        form = BookIssueForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('book_issue_list')
-    context = {
-        'form':form
-    }
-    return render(request, 'catalog/book_issue.html', context=context)
-
-def add_member(request):
-    if not request.user.is_superuser:
-        return redirect('login')
-    form = AddMemberForm()
-    if request.method == 'POST':
-        form = AddMemberForm(data = request.POST, files=request.FILES)
-        if form.is_valid():
-            first_name = form.cleaned_data['first_name']
-            last_name = form.cleaned_data['last_name']
-            email = form.cleaned_data['email']
-            avatar = form.cleaned_data['avatar']
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            retype_password = form.cleaned_data['retype_password']
-            if password == retype_password:
-                user = User.objects.create_user(username=username, password=password)
-                print("--- after user.obj_create user---")
-                user.member.first_name = first_name
-                user.member.last_name = last_name
-                user.member.email = email
-                user.member.avatar = avatar
-                print("--- before user.save---")
-                user.save()
-                print("--- after user.save---")
-                # create_member = Member.objects.create(user=user, first_name=first_name, last_name=last_name, email=email, avatar=avatar)
-                # create_member = form.save(commit=False)
-                # create_member.save()
-                return redirect('member_list')
-            return redirect('member_list')
-    context = {
-        'form':form
-    }
-    return render(request, 'catalog/add_member.html', context=context)
-
-'''
-class BookListUpdateView(UpdateView):
-    form = BookAddForm
-    model = BookEntry
-    fields = '__all__'
-    template_name = 'catalog/book_edit.html'
-    success_url = reverse_lazy('book_list')
-
-    def form_valid(self, form):
-        bookedit = BookEntry.objects.get(user=self.request.user)
-        if form.instance.author == bookedit:
-            return super().form_valid(form)
-
-        else:
-            form.add_error(None, "You need to be the author in order to update the post")
-            return super().form_valid(form)
-'''
 def edit_book(request, pk):
     if not request.user.is_superuser:
         return redirect('login')
@@ -130,6 +60,114 @@ def edit_book(request, pk):
     }
     return render(request, 'catalog/book_edit.html', context=context)
 
+def view_book(request, pk):
+    if not request.user.is_superuser:
+        return redirect('login')
+    book_instance = BookEntry.objects.get(isbn=pk)
+    form = BookAddForm(instance= book_instance)
+    context = {
+        'form':form
+    }
+    return render(request, 'catalog/book_detail.html', context=context)
+
+# def view_book(request, pk):
+#     details = get_object_or_404(BookEntry, isbn=pk)
+#     context = {
+#         'details':details
+#     }
+#     return render(request, 'catalog/book_detail.html', context)
+
+class BookDeleteView(DeleteView):
+    model = BookEntry
+    template_name = 'catalog/confirm_delete.html'
+    success_url = reverse_lazy('book_list')
+
+
+# ----------------------------- Library member CRUD views ------------------------------------------
+def member_list(request):
+    memberlist = Member.objects.all()
+    return render(request, 'catalog/member_list.html', {'memberlist': memberlist})
+
+def add_member(request):
+    if not request.user.is_superuser:
+        return redirect('login')
+    form = AddMemberForm()
+    if request.method == 'POST':
+        form = AddMemberForm(request.POST, request.FILES)
+        if form.is_valid():   
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            email = form.cleaned_data['email']
+            avatar = form.cleaned_data['avatar']
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            retype_password = form.cleaned_data['retype_password']
+            if password == retype_password:
+                print("---------1----------------")
+                member_user = User.objects.create_user(username=username, password=password)
+                print(member_user,"-----I am user----------------")
+                print("---------2----------------")
+                Member.objects.create(user = member_user, first_name = first_name, last_name = last_name,email = email ,avatar = avatar)
+                return redirect('member_list')
+    context = {
+        'form':form,
+    }
+    return render(request, 'catalog/add_member.html', context=context)
+
+def edit_member(request, pk):
+    if not request.user.is_superuser:
+        return redirect('login')
+    member_instance = Member.objects.get(id=pk)
+    form = EditMemberForm(instance=member_instance)
+    if request.method == 'POST':
+        form = EditMemberForm(request.POST, request.FILES, instance=member_instance)
+        if form.is_valid():   
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            email = form.cleaned_data['email']
+            avatar = form.cleaned_data['avatar']
+            form.save()
+            return redirect('member_list')
+    context = {
+        'form':form,
+    }
+    return render(request, 'catalog/edit_member.html', context=context)
+
+def member_detail(request, pk):
+    if not request.user.is_superuser:
+        return redirect('login')
+    member_instance = Member.objects.get(id=pk)
+    form = EditMemberForm(instance= member_instance)
+    context = {
+        'form':form
+    }
+    return render(request, 'catalog/member_detail.html', context=context)  
+
+class MemberDeleteView(DeleteView):
+    model = Member
+    template_name = 'catalog/confirm_delete.html'
+    success_url = reverse_lazy('member_list')
+
+
+# ----------------------------- Book issue CRUD views ------------------------------------------
+def book_issue_list(request):
+    book_issue = BookIssue.objects.all()
+    return render(request, 'catalog/book_issued_list.html', {'book_issue': book_issue})
+
+def book_issue(request):
+    if not request.user.is_superuser:
+        return redirect('login')
+    form = BookIssueForm()
+    if request.method == 'POST':
+        form = BookIssueForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('book_issue_list')
+    context = {
+        'form':form
+    }
+    return render(request, 'catalog/book_issue.html', context=context)
+
 def book_issue_edit(request, pk):
     if not request.user.is_superuser:
         return redirect('login')
@@ -144,3 +182,118 @@ def book_issue_edit(request, pk):
         'form':form
     }
     return render(request, 'catalog/book_issue_edit.html', context=context)
+
+def book_issue_detail(request, pk):
+    if not request.user.is_superuser:
+        return redirect('login')
+    book_instance = BookIssue.objects.get(id=pk)
+    form = BookIssueForm(instance= book_instance)
+    context = {
+        'form':form
+    }
+    return render(request, 'catalog/book_issue_detail.html', context=context)
+
+class BookIssueDeleteView(DeleteView):
+    model = BookIssue
+    template_name = 'catalog/confirm_delete.html'
+    success_url = reverse_lazy('book_issue_list')
+
+
+# ----------------------------- Book return CRUD views ------------------------------------------
+def book_return_list(request):
+    book_return = BookReturn.objects.all()
+    return render(request, 'catalog/book_return_list.html', {'book_return': book_return})
+
+def book_return(request):
+    if not request.user.is_superuser:
+        return redirect('login')
+    form = BookReturnForm()
+    if request.method == 'POST':
+        form = BookReturnForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('book_return_list')
+    context = {
+        'form':form
+    }
+    return render(request, 'catalog/add_book_return.html', context=context)
+
+def book_return_edit(request, pk):
+    if not request.user.is_superuser:
+        return redirect('login')
+    book_instance = BookReturn.objects.get(id=pk)
+    form = BookReturnForm(instance=book_instance)
+    if request.method == 'POST':
+        form = BookReturnForm(data=request.POST, files=request.FILES, instance=book_instance)
+        if form.is_valid():
+            form.save()
+            return redirect('book_return_list')
+    context = {
+        'form':form
+    }
+    return render(request, 'catalog/book_return_edit.html', context=context)
+
+def book_return_detail(request, pk):
+    if not request.user.is_superuser:
+        return redirect('login')
+    book_instance = BookReturn.objects.get(id=pk)
+    form = BookReturnForm(instance= book_instance)
+    context = {
+        'form':form
+    }
+    return render(request, 'catalog/book_return_detail.html', context=context)  
+
+class BookReturnDeleteView(DeleteView):
+    model = BookReturn
+    template_name = 'catalog/confirm_delete.html'
+    success_url = reverse_lazy('book_return_list')
+
+
+# ----------------------------- Book renew CRUD views ------------------------------------------
+def book_renew_list(request):
+    book_renew = BookRenew.objects.all()
+    return render(request, 'catalog/book_renew_list.html', {'book_renew':book_renew})
+
+def book_renew(request):
+    if not request.user.is_superuser:
+        return redirect('login')
+    form = BookRenewForm()
+    if request.method == 'POST':
+        form = BookRenewForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('book_renew_list')
+    context = {
+        'form':form
+    }
+    return render(request, 'catalog/add_book_renew.html', context=context)
+
+def book_renew_edit(request, pk):
+    if not request.user.is_superuser:
+        return redirect('login')
+    book_instance = BookRenew.objects.get(id=pk)
+    form = BookRenewForm(instance=book_instance)
+    if request.method == 'POST':
+        form = BookRenewForm(data=request.POST, files=request.FILES, instance=book_instance)
+        if form.is_valid():
+            form.save()
+            return redirect('book_renew_list')
+    context = {
+        'form':form
+    }
+    return render(request, 'catalog/book_renew_edit.html', context=context)
+
+def book_renew_detail(request, pk):
+    if not request.user.is_superuser:
+        return redirect('login')
+    book_instance = BookRenew.objects.get(id=pk)
+    form = BookRenewForm(instance= book_instance)
+    context = {
+        'form':form
+    }
+    return render(request, 'catalog/book_renew_detail.html', context=context)  
+
+class BookRenewDeleteView(DeleteView):
+    model = BookRenew
+    template_name = 'catalog/confirm_delete.html'
+    success_url = reverse_lazy('book_renew_list')

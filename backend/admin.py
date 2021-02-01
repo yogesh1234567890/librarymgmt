@@ -5,3 +5,6 @@ from .models import *
 admin.site.register(Member)
 admin.site.register(BookEntry)
 admin.site.register(BookIssue)
+admin.site.register(BookReturn)
+admin.site.register(BookRenew)
+admin.site.register(Barcode)

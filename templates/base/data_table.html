@@ -1,0 +1,79 @@
+<style>
+    .btn-datatables {
+        height: 35px;
+        font-size: small;
+    }
+</style>
+
+<script>
+    $(document).ready(function() {
+
+        $('#dataTable').DataTable({
+
+
+            dom: 'lBfrtip', //if i use buttons then entries goes away
+            pagingType: "full_numbers",
+
+            buttons: [{
+                    'extend': 'copy',
+                    'text': '<i class="fas fa-copy" aria-hidden="true"></i> Copy',
+
+                    'className': 'btn-datatables', //button css does not work
+
+
+
+                }, {
+                    extend: 'excel',
+                    text: '<i class="fas fa-file-excel" aria-hidden="true"></i> Excel',
+                    'className': 'btn-datatables',
+
+
+                }, {
+                    extend: 'csv',
+                    text: '<i class="fas fa-file-csv" aria-hidden="true"></i> CSV',
+                    'className': 'btn-datatables',
+
+
+                }, {
+                    extend: 'pdf',
+                    text: '<i class="fas fa-file-pdf" aria-hidden="true"></i> PDF',
+                    'className': 'btn-datatables',
+
+
+                },
+                /*
+                {
+                extend: 'print',
+                text: '<i class="fas fa-print" aria-hidden="true"></i> Print',
+                'className': 'btn-datatables',
+    
+    
+                }
+                */
+
+            ],
+
+            //for checkbox
+            columnDefs: [{
+                    orderable: false,
+
+                    className: 'select-checkbox',
+                    targets: 0,
+
+                },
+
+            ],
+
+            select: {
+                style: 'multi',
+                // selector: 'td:first-child'
+
+            },
+            order: [
+                [1, 'asc']
+            ],
+
+
+        });
+    });
+</script>

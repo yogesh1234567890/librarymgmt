@@ -13,9 +13,8 @@
                 <div class="page-header float-right">
                     <div class="page-title">
                         <ol class="breadcrumb text-right">
-                            <li><a href="#">Dashboard</a></li>
-                            <li><a href="#">Member</a></li>
-                            <li class="active">List</li>
+                            <a class="btn btn-primary" href="{% url 'add_member' %}"><i
+                                class="fas fa-plus"></i> Add Member</a>
                         </ol>
                     </div>
                 </div>
@@ -35,25 +34,31 @@
                     <table class="table ">
                         <thead>
                             <tr>
-                                <th class="serial">S.N</th>
+                                <th class="serial">#</th>
                                 <th>Full Name</th>
                                 <th>Email</th>
                                 <th>User ID</th>
                                 <th>Created Date</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% if memberlist %} {% for member_list in memberlist %}
                             <tr>
-                                <td class="serial">{{ member_list.id }}</td>
+                                <td class="serial">{{ forloop.counter }}</td>
                                 <td>{{ member_list.first_name }} {{ member_list.last_name }}</td>
                                 <td>{{ member_list.email }}</td>
                                 <td>{{ member_list.id }}</td>
                                 <td>{{ member_list.created_at }}</td>
+                                <td>
+                                    <a href="{% url 'member_detail' member_list.id %}" class="btn btn-xs btn-success"><i class="fas fa-info"></i></a>
+                                    <a href="{% url 'edit_member' member_list.id %}" class="btn btn-xs btn-warning"><i class="fas fa-user"></i></a>
+                                    <a href="{% url 'del_member' member_list.id %}" class="btn btn-xs btn-danger"><i class="fas fa-xs fa-trash-alt"></i></a>
+                                </td>
                             </tr>
                             {% endfor %} {% else %}
                             <tr>
-                                <td>No Drop Data</td>
+                                <td>No Member Data</td>
                             </tr>
                             {% endif %}
                         </tbody>
