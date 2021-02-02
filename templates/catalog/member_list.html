@@ -1,76 +1,98 @@
-{% extends 'base.html' %} {% block title %}Drop List{% endblock title %} {% block breadcrumbs %}
-<div class="breadcrumbs">
-    <div class="breadcrumbs-inner">
-        <div class="row m-0">
-            <div class="col-sm-4">
-                <div class="page-header float-left">
-                    <div class="page-title">
-                        <h1>Dashboard</h1>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-8">
-                <div class="page-header float-right">
-                    <div class="page-title">
-                        <ol class="breadcrumb text-right">
-                            <a class="btn btn-primary" href="{% url 'add_member' %}"><i
-                                class="fas fa-plus"></i> Add Member</a>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+{% extends 'base.html' %} {% block title %}Members{% endblock title %} {% block breadcrumb %}
+<a class="btn btn-primary" href="{% url 'add_member' %}"><i
+    class="fas fa-plus"></i> Add Members</a> {% endblock breadcrumb %} {% block content %}
+<div class="table-responsive">
+    <table id="librarytable" class="table table-bordered table-striped" data-page-length='100'>
+        <thead class="thead-light">
+            <tr>
+                <th></th>
+                <th class="serial">#</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>User ID</th>
+                <th>Created Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if memberlist %} {% for member_list in memberlist %}
+            <tr>
+                <td></td>
+                <td class="serial">{{ forloop.counter }}</td>
+                <td>{{ member_list.first_name }} {{ member_list.last_name }}</td>
+                <td>{{ member_list.email }}</td>
+                <td>{{ member_list.id }}</td>
+                <td>{{ member_list.created_at }}</td>
+                <td>
+                    <a href="{% url 'member_detail' member_list.id %}" class="btn btn-xs btn-success"><i class="fas fa-info"></i></a>
+                    <a href="{% url 'edit_member' member_list.id %}" class="btn btn-xs btn-warning"><i class="fas fa-user"></i></a>
+                    <a href="{% url 'del_member' member_list.id %}" class="btn btn-xs btn-danger"><i class="fas fa-xs fa-trash-alt"></i></a>
+                </td>
+            </tr>
+            {% endfor %} {% else %}
+            <tr>
+                <td>No Member Added</td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
 </div>
-{% endblock breadcrumbs %} {% block content %}
-<div class="row">
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="box-title">Member List </h4>
-            </div>
-            <div class="card-body--">
-                <div class="table-stats order-table ov-h">
-                    <table class="table ">
-                        <thead>
-                            <tr>
-                                <th class="serial">#</th>
-                                <th>Full Name</th>
-                                <th>Email</th>
-                                <th>User ID</th>
-                                <th>Created Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% if memberlist %} {% for member_list in memberlist %}
-                            <tr>
-                                <td class="serial">{{ forloop.counter }}</td>
-                                <td>{{ member_list.first_name }} {{ member_list.last_name }}</td>
-                                <td>{{ member_list.email }}</td>
-                                <td>{{ member_list.id }}</td>
-                                <td>{{ member_list.created_at }}</td>
-                                <td>
-                                    <a href="{% url 'member_detail' member_list.id %}" class="btn btn-xs btn-success"><i class="fas fa-info"></i></a>
-                                    <a href="{% url 'edit_member' member_list.id %}" class="btn btn-xs btn-warning"><i class="fas fa-user"></i></a>
-                                    <a href="{% url 'del_member' member_list.id %}" class="btn btn-xs btn-danger"><i class="fas fa-xs fa-trash-alt"></i></a>
-                                </td>
-                            </tr>
-                            {% endfor %} {% else %}
-                            <tr>
-                                <td>No Member Data</td>
-                            </tr>
-                            {% endif %}
-                        </tbody>
-                    </table>
-                </div>
-                <!-- /.table-stats -->
-            </div>
-        </div>
-        <!-- /.card -->
-    </div>
-    <!-- /.col-lg-8 -->
+{% endblock content %} {% block morejs %}
+<script>
+    $('#librarytable').DataTable({
+        dom: 'lBfrtip', //if i use buttons then entries goes away
+        pagingType: "full_numbers",
+
+        buttons: [{
+                'extend': 'copy',
+                'text': '<i class="fas fa-copy" aria-hidden="true"></i> Copy',
+
+                'className': 'btn-datatables', //button css does not work
 
 
-</div>
-{% endblock content %}
+
+            }, {
+                extend: 'excel',
+                text: '<i class="fas fa-file-excel" aria-hidden="true"></i> Excel',
+                'className': 'btn-datatables',
+
+
+            }, {
+                extend: 'csv',
+                text: '<i class="fas fa-file-csv" aria-hidden="true"></i> CSV',
+                'className': 'btn-datatables',
+
+
+            }, {
+                extend: 'pdf',
+                text: '<i class="fas fa-file-pdf" aria-hidden="true"></i> PDF',
+                'className': 'btn-datatables',
+
+
+            },
+
+        ],
+
+        //for checkbox
+        columnDefs: [{
+                orderable: false,
+
+                className: 'select-checkbox',
+                targets: 0,
+
+            },
+
+        ],
+
+        select: {
+            style: 'multi',
+            // selector: 'td:first-child'
+
+        },
+        order: [
+            [1, 'asc']
+        ],
+    });
+</script>
+
+{% endblock morejs %}

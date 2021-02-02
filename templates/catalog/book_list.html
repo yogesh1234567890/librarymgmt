@@ -5,11 +5,12 @@
     <table id="librarytable" class="table table-bordered table-striped" data-page-length='100'>
         <thead class="thead-light">
             <tr>
+                <th></th>
                 <th class="serial">#</th>
                 <th>Title</th>
                 <th>Author</th>
                 <th>Book Type</th>
-                <th>Status</th>
+                <th>Quantity</th>
                 <th>Created At</th>
                 <th>Action</th>
             </tr>
@@ -18,11 +19,12 @@
             {% if book_list %}
             <tr class='clickable-row' data-href="#">
                 {% for booklist in book_list %}
+                <td></td>
                 <td class="serial">{{ forloop.counter }}</td>
                 <td>{{ booklist.title }}</td>
                 <td>{{ booklist.author }}</td>
                 <td>{{ booklist.genre }}</td>
-                <td>total: {{ booklist.total_copies}} copies <br> available: {{ booklist.available_copies}} copies</td>
+                <td>{{ booklist.quantity}}</td>
                 <td>{{ booklist.created_at }}</td>
                 <td>
                     <a href="{% url 'view_book' booklist.isbn %}" class="btn btn-xs btn-success"><i class="fas fa-info"></i></a>
@@ -71,15 +73,6 @@
 
 
             },
-            /*
-                {
-                extend: 'print',
-                text: '<i class="fas fa-print" aria-hidden="true"></i> Print',
-                'className': 'btn-datatables',
-    
-    
-                }
-                */
 
         ],
 

@@ -58,15 +58,15 @@ class BookAddForm(forms.ModelForm):
         'data-val': 'true',
         'data-val-required': 'Please enter book return in language',
     }))
-    total_copies = forms.IntegerField(widget=forms.NumberInput(attrs={
+    quantity = forms.IntegerField(widget=forms.NumberInput(attrs={
         'class': 'form-control',
-        'id': 'total_copies',
+        'id': 'quantity',
         'data-val': 'true',
         'data-val-required': 'Please enter total copies',
     }))
-    available_copies = forms.IntegerField(widget=forms.NumberInput(attrs={
+    price = forms.FloatField(widget=forms.NumberInput(attrs={
         'class': 'form-control',
-        'id': 'available_copies',
+        'id': 'price',
         'data-val': 'true',
         'data-val-required': 'Please enter available copies',
     }))
@@ -91,6 +91,7 @@ class BookIssueForm(forms.ModelForm):
         widgets = {
             'issue_book_name': forms.TextInput(attrs={'class': 'form-control', 'id': 'issue_book_name'}),
             'isbn': forms.Select(attrs={'class': 'form-control', 'id': 'isbn'}),
+            'quantity': forms.NumberInput(attrs={'class': 'form-control', 'id': 'quantity'}),
             'member_name': forms.TextInput(attrs={'class': 'form-control', 'id': 'member_name'}),
             'member_id': forms.Select(attrs={'class': 'form-control', 'id': 'member_id'}),
         }
@@ -98,10 +99,11 @@ class BookIssueForm(forms.ModelForm):
 class BookReturnForm(forms.ModelForm):
     class Meta:
         model = BookReturn
-        exclude = ['return_date', 'created_at']
+        exclude = ['return_date',]
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'id': 'title'}),
             'isbn': forms.Select(attrs={'class': 'form-control', 'id': 'isbn'}),
+            'quantity': forms.NumberInput(attrs={'class': 'form-control', 'id': 'quantity'}),
             'member_name': forms.TextInput(attrs={'class': 'form-control', 'id': 'member_name'}),
             'member_id': forms.Select(attrs={'class': 'form-control', 'id': 'member_id'}),
         }
@@ -110,10 +112,11 @@ class BookRenewForm(forms.ModelForm):
     class Meta:
         model = BookRenew
         fields = '__all__'
-        exclude = ['renew_date', 'created_at']
+        exclude = ['renew_date',]
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'id': 'title'}),
             'isbn': forms.Select(attrs={'class': 'form-control', 'id': 'isbn'}),
+            'quantity': forms.NumberInput(attrs={'class': 'form-control', 'id': 'quantity'}),
             'member_name': forms.TextInput(attrs={'class': 'form-control', 'id': 'member_name'}),
             'member_id': forms.Select(attrs={'class': 'form-control', 'id': 'member_id'}),
         }
@@ -172,6 +175,35 @@ class EditMemberForm(forms.ModelForm):
         model = Member
         fields = '__all__'
         exclude = ('user',)
+    first_name = forms.CharField(widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'id': 'first_name',
+        'data-val': 'true',
+        'data-val-required': 'Please enter first name',
+    }))
+    last_name = forms.CharField(widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'id': 'last_name',
+        'data-val': 'true',
+        'data-val-required': 'Please enter last name',
+    }))
+    email = forms.CharField(widget=forms.EmailInput(attrs={
+        'class': 'form-control',
+        'id': 'email',
+        'data-val': 'true',
+        'data-val-required': 'Please enter email',
+    }))
+    avatar = forms.ImageField(widget=forms. FileInput(attrs={
+        'class': 'form-control',
+        'id': 'email',
+        'data-val': 'true',
+        'data-val-required': 'Please enter email',
+    }))
+
+class MemberDetailForm(forms.ModelForm):
+    class Meta:
+        model = Member
+        fields = '__all__'
     first_name = forms.CharField(widget=forms.TextInput(attrs={
         'class': 'form-control',
         'id': 'first_name',

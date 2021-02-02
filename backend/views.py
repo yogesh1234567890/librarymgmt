@@ -28,7 +28,7 @@ def logout_page(request):
 
 # ----------------------------- Book CRUD views ------------------------------------------
 def book_list(request):
-    book_list = BookEntry.objects.all()
+    book_list = BookEntry.objects.all().order_by('-isbn')
     return render(request, 'catalog/book_list.html', {'book_list': book_list})
     
 def add_book(request):
@@ -137,7 +137,7 @@ def member_detail(request, pk):
     if not request.user.is_superuser:
         return redirect('login')
     member_instance = Member.objects.get(id=pk)
-    form = EditMemberForm(instance= member_instance)
+    form = MemberDetailForm(instance= member_instance)
     context = {
         'form':form
     }
@@ -161,6 +161,13 @@ def book_issue(request):
     if request.method == 'POST':
         form = BookIssueForm(request.POST, request.FILES)
         if form.is_valid():
+            book_quantity = BookEntry.objects.get(title=title)
+            if book_quantity.Quantity < qt:
+                form.errors['value']='Your entered quantity exceeds book quantity'
+                return self.form_invalid(form)
+            else:
+                book_quantity.Quantity -=qt
+                book_quantity.save()
             form.save()
             return redirect('book_issue_list')
     context = {
