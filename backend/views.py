@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
+from django.db import transaction
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import DetailView
 from django.forms import widgets
@@ -159,7 +160,7 @@ def book_issue_list(request):
     return render(request, 'catalog/book_issued_list.html', {'book_issue': book_issue})
 
 class BookIssueCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
-    model = BookIssue
+    model = Issue
     template_name = "catalog/sales_form.html"
     fields = '__all__'
     success_message = "Book Issued added successfully."
@@ -179,10 +180,8 @@ class BookIssueCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
             if items.is_valid():
                 items.instance = form.save(commit=False)
                 for i in items:
-                    title=form.cleaned_data['title']
-                    qt=form.cleaned_data['quantity']
-                    print(title)
-                    print(qt)
+                    title=i.cleaned_data['isbn']
+                    qt=i.cleaned_data['quantity']
                     book_quantity = BookEntry.objects.get(title=title)
                     if book_quantity.quantity < qt:
                         form.errors['value']='Your entered quantity exceeds book quantity'
@@ -190,6 +189,7 @@ class BookIssueCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
                     else:
                         book_quantity.quantity -=qt
                         book_quantity.save()
+                        form.save()
                         items.save()
                 # sold_item.save()
 

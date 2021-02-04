@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import datetime, timedelta
 from django.contrib.auth.models import User
+from django.urls import reverse
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from .utils import get_random_id
@@ -21,6 +22,33 @@ class Member(models.Model):
     def __str__(self):
         # return f"{self.user.username}--{self.created_at.strftime('%d-%m-%y%y')}"
         return self.user.username
+
+class Issue(models.Model):
+    member=models.ForeignKey(Member, on_delete=models.CASCADE)
+    date=models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.member)
+
+    @property
+    def total_order(self):
+        order_items = BookIssue.objects.filter(issue_id=self.id)
+        sum = 0
+        for order_item in order_items:
+            sum = sum + order_item.get_price_total
+        return sum
+
+    @property
+    def total_qty(self):
+        order_items = BookIssue.objects.filter(issue_id=self.id)
+        total_qty = 0
+        for order_item in order_items:
+            total_qty = (order_item.quantity + total_qty)
+        return total_qty
+
+
+    def get_absolute_url(self):
+        return reverse('book_issue_list')
 
 class BookEntry(models.Model):
     class Meta:
@@ -47,6 +75,7 @@ def get_expiry():
 class BookIssue(models.Model):
     class Meta:
         verbose_name_plural = 'Book Issue'
+    issue_id=models.ForeignKey(Issue,on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     isbn = models.ForeignKey(BookEntry, on_delete=models.CASCADE)
     quantity = models.IntegerField()

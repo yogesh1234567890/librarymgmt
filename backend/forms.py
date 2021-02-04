@@ -102,9 +102,9 @@ class BookAddForm(forms.ModelForm):
 class BookIssueForm(ModelForm):
     class Meta:
         model=BookIssue
-        fields = ['title', 'quantity']
+        fields = '__all__'
         
-BookIssueFormset=inlineformset_factory(Member, BookIssue, form=BookIssueForm,extra=1)
+BookIssueFormset=inlineformset_factory(Issue, BookIssue, form=BookIssueForm,extra=1)
 
 class BookReturnForm(forms.ModelForm):
     class Meta:
