@@ -240,15 +240,13 @@ def book_issue_edit(request, pk):
     }
     return render(request, 'catalog/book_issue_edit.html', context=context)
 
-def book_issue_detail(request, pk):
-    if not request.user.is_superuser:
-        return redirect('login')
-    book_instance = BookIssue.objects.get(id=pk)
-    form = BookIssueForm(instance= book_instance)
-    context = {
-        'form':form
-    }
-    return render(request, 'catalog/book_issue_detail.html', context=context)
+class book_issue_detail(LoginRequiredMixin,DetailView):
+    model = Issue
+    template_name = 'catalog/sales_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(book_issue_detail, self).get_context_data(**kwargs)
+        return context
 
 class BookIssueDeleteView(DeleteView):
     model = BookIssue

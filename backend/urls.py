@@ -53,7 +53,7 @@ urlpatterns = [
     path('create/<int:pk>',BookIssueCreateView.as_view(),name='bookissue-create'),
     # path('book_issue/', book_issue, name='book_issue'),
     path('book_issue_edit/<int:pk>', book_issue_edit, name='book_issue_edit'),
-    path('book_issue_detail/<int:pk>', book_issue_detail, name='book_issue_detail'),
+    path('book_issue_detail/<int:pk>', book_issue_detail.as_view(), name='book_issue_detail'),
     path('del_book_issue/<int:pk>', BookIssueDeleteView.as_view(), name='del_book_issue'),
 
     #------------------------------------ book return url ---------------------------------------------

@@ -48,7 +48,7 @@ class Issue(models.Model):
 
 
     def get_absolute_url(self):
-        return reverse('book_issue_list')
+        return reverse('book_issue_detail', kwargs={'pk': self.pk})
 
 class BookEntry(models.Model):
     class Meta:
@@ -85,7 +85,7 @@ class BookIssue(models.Model):
     expirydate = models.DateField(default=get_expiry)
     
     def __str__(self):
-        return str(self.issue_book_name) + "[" + str(self.isbn) + ']'
+        return str(self.title) + "[" + str(self.isbn) + ']'
 
 class BookReturn(models.Model):
     title = models.CharField(max_length=200)
