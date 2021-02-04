@@ -11,11 +11,10 @@ from io import BytesIO
 from django.core.files import File
 # Create your models here.
 class Member(models.Model):
-    first_name = models.CharField(max_length=50, blank=True)
-    last_name = models.CharField(max_length=50, blank=True)
+    full_name = models.CharField(max_length=100, blank=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     email = models.EmailField(max_length=50,blank=True )
-    avatar = models.ImageField(default="avatar.jpg", upload_to="avatar/", blank=True)
+    avatar = models.ImageField(default="avatar.jpg", upload_to="avatar/", blank=True, null=True)
     updated_at = models.DateTimeField(auto_now = True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -33,7 +32,7 @@ class BookEntry(models.Model):
                             help_text='13 Character <a href="https://www.isbn-international.org/content/what-isbn">ISBN number</a>')
     genre = models.TextField(max_length=20, help_text="For example: science, History, Technical, Enclyclopedia, etc.", null=True)
     language = models.TextField(max_length=20)
-    quantity = models.IntegerField(null=True)
+    quantity = models.IntegerField()
     price = models.FloatField(null=True, blank=True)
     pic = models.ImageField(blank=True, null=True, upload_to='book_image')
     published_year = models.DateField(null=True)
@@ -43,14 +42,14 @@ class BookEntry(models.Model):
         return self.title
 
 def get_expiry():
-    return datetime.today() + timedelta(days=15)
+    return datetime.today() + timedelta(days=1)
 
 class BookIssue(models.Model):
     class Meta:
         verbose_name_plural = 'Book Issue'
-    issue_book_name = models.CharField(max_length=200)
+    title = models.CharField(max_length=200)
     isbn = models.ForeignKey(BookEntry, on_delete=models.CASCADE)
-    quantity = models.IntegerField(null=True)
+    quantity = models.IntegerField()
     member_name = models.CharField(max_length=200)
     member_id = models.ForeignKey(Member, on_delete=models.CASCADE)
     issue_date = models.DateTimeField(auto_now_add=True)
@@ -62,7 +61,7 @@ class BookIssue(models.Model):
 class BookReturn(models.Model):
     title = models.CharField(max_length=200)
     isbn = models.ForeignKey(BookIssue, on_delete=models.CASCADE)
-    quantity = models.IntegerField(null=True)
+    quantity = models.IntegerField()
     member_name = models.CharField(max_length=200)
     member_id = models.ForeignKey(Member, on_delete=models.CASCADE)
     return_date = models.DateTimeField(auto_now_add=True)
@@ -74,7 +73,7 @@ class BookReturn(models.Model):
 class BookRenew(models.Model):
     title = models.CharField(max_length=200)
     isbn = models.ForeignKey(BookIssue, on_delete=models.CASCADE)
-    quantity = models.IntegerField(null=True)
+    quantity = models.IntegerField()
     member_name = models.CharField(max_length=200)
     member_id = models.ForeignKey(Member, on_delete=models.CASCADE)
     renew_date = models.DateTimeField(auto_now_add=True)

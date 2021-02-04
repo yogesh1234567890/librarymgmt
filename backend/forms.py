@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import ModelForm, inlineformset_factory
 from .models import *
 
 class BookForm(forms.ModelForm):
@@ -41,7 +42,9 @@ class BookAddForm(forms.ModelForm):
         'data-val-required': 'Please 13 digit isbn',
     }))
     summary = forms.CharField(widget=forms.TextInput(attrs={
+        
         'class': 'form-control',
+        'row':3,
         'id': 'summary',
         'data-val': 'true',
         'data-val-required': 'Please enter book summary',
@@ -83,18 +86,25 @@ class BookAddForm(forms.ModelForm):
         'data-val-required': 'Please enter book published year',    
     }))
 
-class BookIssueForm(forms.ModelForm):
+# class BookIssueForm(forms.ModelForm):
+#     class Meta:
+#         model = BookIssue
+#         fields = '__all__'
+#         exclude = ['issue_date']
+#         widgets = {
+#             'issue_book_name': forms.TextInput(attrs={'class': 'form-control', 'id': 'issue_book_name'}),
+#             'isbn': forms.Select(attrs={'class': 'form-control', 'id': 'isbn'}),
+#             'quantity': forms.NumberInput(attrs={'class': 'form-control', 'id': 'quantity'}),
+#             'member_name': forms.TextInput(attrs={'class': 'form-control', 'id': 'member_name'}),
+#             'member_id': forms.Select(attrs={'class': 'form-control', 'id': 'member_id'}),
+#         }
+
+class BookIssueForm(ModelForm):
     class Meta:
-        model = BookIssue
-        fields = '__all__'
-        exclude = ['issue_date']
-        widgets = {
-            'issue_book_name': forms.TextInput(attrs={'class': 'form-control', 'id': 'issue_book_name'}),
-            'isbn': forms.Select(attrs={'class': 'form-control', 'id': 'isbn'}),
-            'quantity': forms.NumberInput(attrs={'class': 'form-control', 'id': 'quantity'}),
-            'member_name': forms.TextInput(attrs={'class': 'form-control', 'id': 'member_name'}),
-            'member_id': forms.Select(attrs={'class': 'form-control', 'id': 'member_id'}),
-        }
+        model=BookIssue
+        fields = ['title', 'quantity']
+        
+BookIssueFormset=inlineformset_factory(Member, BookIssue, form=BookIssueForm,extra=1)
 
 class BookReturnForm(forms.ModelForm):
     class Meta:
@@ -127,17 +137,11 @@ class AddMemberForm(forms.ModelForm):
         model = Member
         fields = '__all__'
         exclude = ('user',)
-    first_name = forms.CharField(widget=forms.TextInput(attrs={
+    full_name = forms.CharField(widget=forms.TextInput(attrs={
         'class': 'form-control',
-        'id': 'first_name',
+        'id': 'full_name',
         'data-val': 'true',
         'data-val-required': 'Please enter first name',
-    }))
-    last_name = forms.CharField(widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'id': 'last_name',
-        'data-val': 'true',
-        'data-val-required': 'Please enter last name',
     }))
     email = forms.CharField(widget=forms.EmailInput(attrs={
         'class': 'form-control',
@@ -175,17 +179,11 @@ class EditMemberForm(forms.ModelForm):
         model = Member
         fields = '__all__'
         exclude = ('user',)
-    first_name = forms.CharField(widget=forms.TextInput(attrs={
+    full_name = forms.CharField(widget=forms.TextInput(attrs={
         'class': 'form-control',
-        'id': 'first_name',
+        'id': 'full_name',
         'data-val': 'true',
         'data-val-required': 'Please enter first name',
-    }))
-    last_name = forms.CharField(widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'id': 'last_name',
-        'data-val': 'true',
-        'data-val-required': 'Please enter last name',
     }))
     email = forms.CharField(widget=forms.EmailInput(attrs={
         'class': 'form-control',

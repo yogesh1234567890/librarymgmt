@@ -1,6 +1,8 @@
 {% extends 'base.html' %} {% block title %}Issue Book{% endblock title %} {% block breadcrumb %}
-<a class="btn btn-primary" href="{% url 'book_issue' %}"><i
-    class="fas fa-plus"></i> Issue Book</a> {% endblock breadcrumb %} {% block content %}
+<a class="btn btn-secondary" href="{% url 'member_list' %}"><i
+    class="fas fa-plus"></i>Existing Member</a>
+<a class="btn btn-primary" href="{% url 'add_member' %}"><i
+    class="fas fa-plus"></i> Add New Member</a> {% endblock breadcrumb %} {% block content %}
 <div class="table-responsive">
     <table id="librarytable" class="table table-bordered table-striped" data-page-length='100'>
         <thead class="thead-light">
@@ -11,6 +13,7 @@
                 <th>Member</th>
                 <th>Quantity</th>
                 <th>Issued Date</th>
+                <th>status</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -24,6 +27,7 @@
                 <td>{{ book_issue.member_name }}</td>
                 <td>{{ book_issue.quantity }}</td>
                 <td>{{ book_issue.issue_date}}</td>
+                <td></td>
                 <td>
                     <a href="{% url 'book_issue_detail' book_issue.id %}" class="btn btn-xs btn-success"><i class="fas fa-info"></i></a>
                     <a href="{% url 'book_issue_edit' book_issue.id %}" class="btn btn-xs btn-warning"><i class="fas fa-edit"></i></a>

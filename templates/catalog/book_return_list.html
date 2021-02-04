@@ -25,7 +25,6 @@
                 <td>{{ bookreturnlist.member_name }}</td>
                 <td>{{ bookreturnlist.quantity }}</td>
                 <td>{{ bookreturnlist.return_date}}</td>
-                <td>{{ bookreturnlist.created_at}}</td>
                 <td>
                     <a href="{% url 'book_return_detail' bookreturnlist.id %}" class="btn btn-xs btn-success"><i class="fas fa-info"></i></a>
                     <a href="{% url 'book_return_edit' bookreturnlist.id%}" class="btn btn-xs btn-warning"><i class="fas fa-edit"></i></a>

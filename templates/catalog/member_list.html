@@ -16,10 +16,10 @@
         </thead>
         <tbody>
             {% if memberlist %} {% for member_list in memberlist %}
-            <tr>
+            <tr class='clickable-row' data-href="{% url 'bookissue-create' member_list.id %}">
                 <td></td>
                 <td class="serial">{{ forloop.counter }}</td>
-                <td>{{ member_list.first_name }} {{ member_list.last_name }}</td>
+                <td>{{ member_list.full_name }}</td>
                 <td>{{ member_list.email }}</td>
                 <td>{{ member_list.id }}</td>
                 <td>{{ member_list.created_at }}</td>
@@ -46,10 +46,7 @@
         buttons: [{
                 'extend': 'copy',
                 'text': '<i class="fas fa-copy" aria-hidden="true"></i> Copy',
-
                 'className': 'btn-datatables', //button css does not work
-
-
 
             }, {
                 extend: 'excel',

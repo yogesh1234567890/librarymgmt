@@ -1,7 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth import authenticate, login, logout
-from django.views.generic import UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib import messages
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic import DetailView
+from django.forms import widgets
+from django.forms import inlineformset_factory
 from .models import *
 from .forms import *
 
@@ -95,8 +101,7 @@ def add_member(request):
     if request.method == 'POST':
         form = AddMemberForm(request.POST, request.FILES)
         if form.is_valid():   
-            first_name = form.cleaned_data['first_name']
-            last_name = form.cleaned_data['last_name']
+            full_name = form.cleaned_data['full_name']
             email = form.cleaned_data['email']
             avatar = form.cleaned_data['avatar']
             username = form.cleaned_data['username']
@@ -107,7 +112,7 @@ def add_member(request):
                 member_user = User.objects.create_user(username=username, password=password)
                 print(member_user,"-----I am user----------------")
                 print("---------2----------------")
-                Member.objects.create(user = member_user, first_name = first_name, last_name = last_name,email = email ,avatar = avatar)
+                Member.objects.create(user = member_user, full_name = full_name, email = email ,avatar = avatar)
                 return redirect('member_list')
     context = {
         'form':form,
@@ -122,8 +127,7 @@ def edit_member(request, pk):
     if request.method == 'POST':
         form = EditMemberForm(request.POST, request.FILES, instance=member_instance)
         if form.is_valid():   
-            first_name = form.cleaned_data['first_name']
-            last_name = form.cleaned_data['last_name']
+            full_name = form.cleaned_data['full_name']
             email = form.cleaned_data['email']
             avatar = form.cleaned_data['avatar']
             form.save()
@@ -154,26 +158,72 @@ def book_issue_list(request):
     book_issue = BookIssue.objects.all()
     return render(request, 'catalog/book_issued_list.html', {'book_issue': book_issue})
 
-def book_issue(request):
-    if not request.user.is_superuser:
-        return redirect('login')
-    form = BookIssueForm()
-    if request.method == 'POST':
-        form = BookIssueForm(request.POST, request.FILES)
-        if form.is_valid():
-            book_quantity = BookEntry.objects.get(title=title)
-            if book_quantity.Quantity < qt:
-                form.errors['value']='Your entered quantity exceeds book quantity'
-                return self.form_invalid(form)
-            else:
-                book_quantity.Quantity -=qt
-                book_quantity.save()
-            form.save()
-            return redirect('book_issue_list')
-    context = {
-        'form':form
-    }
-    return render(request, 'catalog/book_issue.html', context=context)
+class BookIssueCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    model = BookIssue
+    template_name = "catalog/sales_form.html"
+    fields = '__all__'
+    success_message = "Book Issued added successfully."
+
+    def get_context_data(self, **kwargs):
+        data = super(BookIssueCreateView, self).get_context_data(**kwargs)
+        if self.request.POST:
+            data['items'] = BookIssueFormset(self.request.POST)
+        else:
+            data['items'] = BookIssueFormset()
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        items = context['items']
+        with transaction.atomic():
+            if items.is_valid():
+                items.instance = form.save(commit=False)
+                for i in items:
+                    title=form.cleaned_data['title']
+                    qt=form.cleaned_data['quantity']
+                    print(title)
+                    print(qt)
+                    book_quantity = BookEntry.objects.get(title=title)
+                    if book_quantity.quantity < qt:
+                        form.errors['value']='Your entered quantity exceeds book quantity'
+                        return self.form_invalid(form)
+                    else:
+                        book_quantity.quantity -=qt
+                        book_quantity.save()
+                        items.save()
+                # sold_item.save()
+
+        return super(BookIssueCreateView, self).form_valid(form)
+
+    def get_initial(self):
+        initial=super(BookIssueCreateView,self).get_initial()
+        initial['member']=Member.objects.get(pk=self.kwargs['pk'])
+        return initial
+
+# def book_issue(request):
+#     if not request.user.is_superuser:
+#         return redirect('login')
+#     form = BookIssueForm()
+#     if request.method == 'POST':
+#         form = BookIssueForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             title=form.cleaned_data['issue_book_name']
+#             qt=form.cleaned_data['quantity']
+#             print(title)
+#             print(qt)
+#             book_quantity = BookEntry.objects.get(title=title)
+#             if book_quantity.quantity < qt:
+#                 form.errors['value']='Your entered quantity exceeds book quantity'
+#                 return self.form_invalid(form)
+#             else:
+#                 book_quantity.quantity -=qt
+#                 book_quantity.save()
+#                 form.save()
+#             return redirect('book_issue_list')
+#     context = {
+#         'form':form
+#     }
+#     return render(request, 'catalog/book_issue.html', context=context)
 
 def book_issue_edit(request, pk):
     if not request.user.is_superuser:
@@ -218,7 +268,18 @@ def book_return(request):
     if request.method == 'POST':
         form = BookReturnForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            title=form.cleaned_data['title']
+            qt=form.cleaned_data['quantity']
+            print(title)
+            print(qt)
+            book_quantity = BookEntry.objects.get(title=title)
+            if book_quantity.quantity < qt:
+                form.errors['value']='Your entered quantity exceeds book quantity'
+                return self.form_invalid(form)
+            else:
+                book_quantity.quantity += qt
+                book_quantity.save()
+                form.save()
             return redirect('book_return_list')
     context = {
         'form':form
