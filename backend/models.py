@@ -30,13 +30,13 @@ class Issue(models.Model):
     def __str__(self):
         return str(self.member)
 
-    @property
-    def total_order(self):
-        order_items = BookIssue.objects.filter(issue_id=self.id)
-        sum = 0
-        for order_item in order_items:
-            sum = sum + order_item.get_price_total
-        return sum
+    # @property
+    # def total_order(self):
+    #     order_items = BookIssue.objects.filter(issue_id=self.id)
+    #     sum = 0
+    #     for order_item in order_items:
+    #         sum = sum + order_item.get_price_total
+    #     return sum
 
     @property
     def total_qty(self):

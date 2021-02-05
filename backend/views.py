@@ -156,7 +156,7 @@ class MemberDeleteView(DeleteView):
 
 # ----------------------------- Book issue CRUD views ------------------------------------------
 def book_issue_list(request):
-    book_issue = BookIssue.objects.all()
+    book_issue = Issue.objects.all()
     return render(request, 'catalog/book_issued_list.html', {'book_issue': book_issue})
 
 class BookIssueCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):

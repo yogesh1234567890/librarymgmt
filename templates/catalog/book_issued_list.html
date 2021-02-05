@@ -23,8 +23,8 @@
             <tr>
                 <td></td>
                 <td class="serial">{{ forloop.counter }}</td>
-                <td>{{ book_issue.issue_book_name }}</td>
-                <td>{{ book_issue.member_name }}</td>
+                <td>{{ book_issue.member.full_name }}</td>
+                <td>{{ book_issue.total_qty }}</td>
                 <td>{{ book_issue.quantity }}</td>
                 <td>{{ book_issue.issue_date}}</td>
                 <td></td>
