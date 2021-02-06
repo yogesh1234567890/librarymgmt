@@ -225,20 +225,22 @@ class BookIssueCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 #     }
 #     return render(request, 'catalog/book_issue.html', context=context)
 
-def book_issue_edit(request, pk):
-    if not request.user.is_superuser:
-        return redirect('login')
-    book_instance = BookIssue.objects.get(id=pk)
-    form = BookIssueForm(instance=book_instance)
+def book_issue_edit(request, issue_id):
+    book_instance = Issue.objects.get(id=issue_id)
+    form = IssueForm(request.POST,instance=book_instance)
+    ItemFormset = inlineformset_factory(Issue, BookIssue, form=IssueForm, extra=0)
     if request.method == 'POST':
-        form = BookIssueForm(data = request.POST, files = request.FILES, instance=book_instance)
+        formset = ItemFormset(data = request.POST, files = request.FILES, instance=book_instance)
         if form.is_valid():
             form.save()
+            formset.save()
             return redirect('book_issue_list')
-    context = {
-        'form':form
-    }
-    return render(request, 'catalog/book_issue_edit.html', context=context)
+    else:
+        form = IssueForm(instance=book_instance)
+        formset = ItemFormset(instance=book_instance)
+
+    return render(request, 'catalog/book_issue_edit.html', {'form': form, 'formset': formset})
+
 
 class book_issue_detail(LoginRequiredMixin,DetailView):
     model = Issue

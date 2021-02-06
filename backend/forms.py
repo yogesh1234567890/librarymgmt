@@ -98,6 +98,12 @@ class BookAddForm(forms.ModelForm):
 #             'member_name': forms.TextInput(attrs={'class': 'form-control', 'id': 'member_name'}),
 #             'member_id': forms.Select(attrs={'class': 'form-control', 'id': 'member_id'}),
 #         }
+class IssueForm(ModelForm):
+    class Meta:
+        model = Issue
+        fields = '__all__'
+
+
 
 class BookIssueForm(ModelForm):
     class Meta:
