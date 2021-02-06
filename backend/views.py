@@ -77,13 +77,6 @@ def view_book(request, pk):
     }
     return render(request, 'catalog/book_detail.html', context=context)
 
-# def view_book(request, pk):
-#     details = get_object_or_404(BookEntry, isbn=pk)
-#     context = {
-#         'details':details
-#     }
-#     return render(request, 'catalog/book_detail.html', context)
-
 class BookDeleteView(DeleteView):
     model = BookEntry
     template_name = 'catalog/confirm_delete.html'
@@ -161,9 +154,14 @@ def book_issue_list(request):
 
 class BookIssueCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Issue
-    template_name = "catalog/sales_form.html"
+    template_name = "catalog/book_issue_form.html"
     fields = '__all__'
     success_message = "Book Issued added successfully."
+
+    def get_success_message(self, cleaned_data):
+        print(cleaned_data)
+        print('Book added successfully!')
+        return "Book Issued Successfully! "
 
     def get_context_data(self, **kwargs):
         data = super(BookIssueCreateView, self).get_context_data(**kwargs)
@@ -180,7 +178,7 @@ class BookIssueCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
             if items.is_valid():
                 items.instance = form.save(commit=False)
                 for i in items:
-                    title=i.cleaned_data['isbn']
+                    title=i.cleaned_data['title']
                     qt=i.cleaned_data['quantity']
                     book_quantity = BookEntry.objects.get(title=title)
                     if book_quantity.quantity < qt:
@@ -197,7 +195,8 @@ class BookIssueCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
     def get_initial(self):
         initial=super(BookIssueCreateView,self).get_initial()
-        initial['member']=Member.objects.get(pk=self.kwargs['pk'])
+        initial['member'] = Member.objects.get(pk=self.kwargs['pk'])
+        # initial['member_id']=Member.objects.get(pk=self.kwargs['pk'])
         return initial
 
 # def book_issue(request):
@@ -227,7 +226,7 @@ class BookIssueCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
 def book_issue_edit(request, issue_id):
     book_instance = Issue.objects.get(id=issue_id)
-    form = IssueForm(request.POST,instance=book_instance)
+    form = IssueForm(request.POST,instance=book_instance, include=['member_name',])   
     ItemFormset = inlineformset_factory(Issue, BookIssue, form=IssueForm, extra=0)
     if request.method == 'POST':
         formset = ItemFormset(data = request.POST, files = request.FILES, instance=book_instance)
@@ -244,7 +243,7 @@ def book_issue_edit(request, issue_id):
 
 class book_issue_detail(LoginRequiredMixin,DetailView):
     model = Issue
-    template_name = 'catalog/sales_detail.html'
+    template_name = 'catalog/book_issue_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super(book_issue_detail, self).get_context_data(**kwargs)
@@ -261,30 +260,65 @@ def book_return_list(request):
     book_return = BookReturn.objects.all()
     return render(request, 'catalog/book_return_list.html', {'book_return': book_return})
 
-def book_return(request):
-    if not request.user.is_superuser:
-        return redirect('login')
-    form = BookReturnForm()
-    if request.method == 'POST':
-        form = BookReturnForm(request.POST, request.FILES)
-        if form.is_valid():
-            title=form.cleaned_data['title']
-            qt=form.cleaned_data['quantity']
-            print(title)
-            print(qt)
-            book_quantity = BookEntry.objects.get(title=title)
-            if book_quantity.quantity < qt:
-                form.errors['value']='Your entered quantity exceeds book quantity'
-                return self.form_invalid(form)
-            else:
-                book_quantity.quantity += qt
-                book_quantity.save()
-                form.save()
-            return redirect('book_return_list')
-    context = {
-        'form':form
-    }
-    return render(request, 'catalog/add_book_return.html', context=context)
+class BookReturnView(LoginRequiredMixin,DetailView,UpdateView):
+    model = Issue
+    fields='__all__'
+    template_name = 'catalog/book_return_update.html'
+
+    def get_context_data(self, **kwargs):
+        data = super(BookReturnView, self).get_context_data(**kwargs)
+        if self.request.POST:
+            data['items'] = BookIssueFormset(self.request.POST)
+        else:
+            data['items'] = BookIssueFormset()
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        full_name=context['object']
+        member_id=Member.objects.get(full_name=full_name)
+        issue_id=Issue.objects.get(member_id=member_id)
+        items = context['items']
+        with transaction.atomic():
+            if items.is_valid():
+                items.instance = form.save(commit=False)
+                for i in items:
+                    title = i.cleaned_data['title']
+                    qt=i.cleaned_data['quantity']
+                    book=title.title
+                    issue_item_id = BookIssue.objects.filter(issue_id_id=issue_id, book_id=title.id)
+                    for i in issue_item_id:
+                        i.quantity -= qt
+                        i.save()
+                        issued_item=BookEntry.objects.get(title=title)
+                        issued_item.Quantity +=qt
+                        issued_item.save()
+        return super(BookReturnView, self).form_valid(form)
+
+# def book_return(request):
+#     if not request.user.is_superuser:
+#         return redirect('login')
+#     form = BookReturnForm()
+#     if request.method == 'POST':
+#         form = BookReturnForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             title=form.cleaned_data['title']
+#             qt=form.cleaned_data['quantity']
+#             print(title)
+#             print(qt)
+#             book_quantity = BookEntry.objects.get(title=title)
+#             if book_quantity.quantity < qt:
+#                 form.errors['value']='Your entered quantity exceeds book quantity'
+#                 return self.form_invalid(form)
+#             else:
+#                 book_quantity.quantity += qt
+#                 book_quantity.save()
+#                 form.save()
+#             return redirect('book_return_list')
+#     context = {
+#         'form':form
+#     }
+#     return render(request, 'catalog/add_book_return.html', context=context)
 
 def book_return_edit(request, pk):
     if not request.user.is_superuser:
