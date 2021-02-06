@@ -251,7 +251,7 @@ class book_issue_detail(LoginRequiredMixin,DetailView):
         return context
 
 class BookIssueDeleteView(DeleteView):
-    model = BookIssue
+    model = Issue
     template_name = 'catalog/confirm_delete.html'
     success_url = reverse_lazy('book_issue_list')
 
