@@ -226,7 +226,7 @@ class BookIssueCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
 def book_issue_edit(request, issue_id):
     book_instance = Issue.objects.get(id=issue_id)
-    form = IssueForm(request.POST,instance=book_instance, include=['member_name',])   
+    form = IssueForm(request.POST,instance=book_instance)   
     ItemFormset = inlineformset_factory(Issue, BookIssue, form=IssueForm, extra=0)
     if request.method == 'POST':
         formset = ItemFormset(data = request.POST, files = request.FILES, instance=book_instance)
@@ -275,9 +275,11 @@ class BookReturnView(LoginRequiredMixin,DetailView,UpdateView):
 
     def form_valid(self, form):
         context = self.get_context_data()
-        full_name=context['object']
-        member_id=Member.objects.get(full_name=full_name)
-        issue_id=Issue.objects.get(member_id=member_id)
+        full_name = context['object']
+        print(full_name)
+        name_id = Member.objects.get(full_name=full_name)
+        print(name_id)
+        issue_id=Issue.objects.get(member_id=name_id)
         items = context['items']
         with transaction.atomic():
             if items.is_valid():
@@ -285,8 +287,9 @@ class BookReturnView(LoginRequiredMixin,DetailView,UpdateView):
                 for i in items:
                     title = i.cleaned_data['title']
                     qt=i.cleaned_data['quantity']
-                    book=title.title
-                    issue_item_id = BookIssue.objects.filter(issue_id_id=issue_id, book_id=title.id)
+                    book = title.title
+                    print(book)
+                    issue_item_id = BookIssue.objects.filter(issue_id_id=issue_id, title_id=title.id)
                     for i in issue_item_id:
                         i.quantity -= qt
                         i.save()
