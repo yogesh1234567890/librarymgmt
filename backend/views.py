@@ -198,6 +198,7 @@ class BookIssueCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     def get_initial(self):
         initial=super(BookIssueCreateView,self).get_initial()
         initial['member']=Member.objects.get(pk=self.kwargs['pk'])
+        
         return initial
 
 # def book_issue(request):
