@@ -18,6 +18,23 @@
         </div>
     </div>
 
+    <div class="col-lg-3 col-md-6">
+        <!-- small box -->
+        <div class="small-box bg-warning">
+            <div class="inner">
+                <div class="stat-content">
+                    <div class="stat-icon dib flat-color-1" style="color: #fff !important;">
+                        <i class="nav-icon fas fa-cart-plus"></i>
+                        <div class="text-left dib">
+                            <div class="stat-text"><span class="count">{{ total_book_issue }} Book Issue</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a href="{% url 'book_issue_list' %}" class="small-box-footer" style="color: #fff !important;">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+
     <div class="col-lg-3 col-6">
         <!-- small box -->
         <div class="small-box bg-success">
@@ -26,7 +43,7 @@
                     <div class="stat-icon dib flat-color-1">
                         <i class="fa fa-reply"></i>
                         <div class="text-left dib">
-                            <div class="stat-text"><span class="count">{{ product }} Return</span></div>
+                            <div class="stat-text"><span class="count">{{ total_book_return }} Book Return</span></div>
                         </div>
                     </div>
                 </div>
@@ -34,24 +51,6 @@
             <a href="{% url 'book_return_list' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
-
-    <div class="col-lg-3 col-md-6">
-        <!-- small box -->
-        <div class="small-box bg-warning">
-            <div class="inner">
-                <div class="stat-content">
-                    <div class="stat-icon dib flat-color-1">
-                        <i class="nav-icon fas fa-cart-plus"></i>
-                        <div class="text-left dib">
-                            <div class="stat-text"><span class="count">{{ total_book_issue }} Book Issue</span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <a href="{% url 'book_issue_list' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-
     <div class="col-lg-3 col-md-6">
         <!-- small box -->
         <div class="small-box bg-danger">

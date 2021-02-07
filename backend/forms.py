@@ -109,6 +109,7 @@ class BookIssueForm(ModelForm):
     class Meta:
         model=BookIssue
         fields = '__all__'
+        # exclude = ['member_name',]
         
 BookIssueFormset=inlineformset_factory(Issue, BookIssue, form=BookIssueForm,extra=1)
 

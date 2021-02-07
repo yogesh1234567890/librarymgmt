@@ -1,59 +1,68 @@
-{% extends 'base.html' %} {% block title %}Issue Detail{% endblock title %} {% block breadcrumbs %}
-<div class="breadcrumbs">
-    <div class="breadcrumbs-inner">
-        <div class="row m-0">
-            <div class="col-sm-4">
-                <div class="page-header float-left">
-                    <div class="page-title">
-                        <h1>Dashboard</h1>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-8">
-                <div class="page-header float-right">
-                    <div class="page-title">
-                        <ol class="breadcrumb text-right">
-                            <li><a href="#">Dashboard</a></li>
-                            <li><a href="#">Issue</a></li>
-                            <li class="active">Detail</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-        </div>
+{% extends 'base.html' %} {% load static %} {% block content-header %}
+<div class="card-header">
+    <div class="card-tools">
+        <a href="#" class="btn btn-tool">Print</a>
+        <a href="" class="btn btn-tool">
+            <i class="fas fa-edit"></i>
+        </a>
+        <a href="" class="btn btn-tool">
+            <i class="fas fa-times"></i>
+        </a>
     </div>
 </div>
-{% endblock breadcrumbs %} {% block content %}
-<div class="row">
-    <div class="col-lg-12">
-        <div class="card">
-            <div class="card-header">
-                <strong class="card-title">Issue Detail</strong>
-            </div>
-            <div class="card-body">
-                <!-- Credit Card -->
-                <div id="pay-invoice">
-                    <div class="card-body">
-                        <form action="#" method="post" novalidate="novalidate">
-                            {% csrf_token %} {{form}}
-                        </form>
-                        <a style="text-align: center;display: block;" href="{% url 'book_issue_list' %}" class="btn btn-xs btn-success"><i class="fas fa-long-arrow-alt-left"></i>Return</a>
-                    </div>
-                </div>
+{% endblock content-header %} {% block content %}
+<label class="col-sm-3 col-form-label" for="{{ field.auto_id }}">
+    {% if messages %}
+    {% for message in messages %}
 
-            </div>
-        </div>
-        <!-- .card -->
+      <small id="{{ field.auto_id }}" class="text-danger">{{ message }}</small>
+    {% endfor %}
+    {% endif %}
+	  {% if form.errors %}
+	  <small id="{{ field.auto_id }}" class="text-danger">{{form.errors}}</small>
 
+	  {% endif %}
+</label>
+<h4> Book Issue Description</h4>
+
+{% if object %}
+
+<h1>{{issue.member.full_name}}</h1>
+<h3>{{issue.member.email}}</h3>
+<h3>{{issue.date}}</h3>
+
+
+<div class='card'>
+    <div class='table-responsive'>
+        <table class='table' id='myTable'>
+            <thead>
+                <tr>
+                    <th>Book</th>
+                    <th>Quantity</th>
+                    <th>Expiry Date</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for saleitem in issue.bookissue_set.all %}
+                <tr>
+                    <td>{{ saleitem.title }}</td>
+                    <td>{{saleitem.quantity}}</td>
+                    <td>{{saleitem.expirydate}}</td>
+
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td class="btn btn-primary" style="width:40%">Total</td>
+                    <td style="font-size:20px">{{issue.total_qty}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <a style="text-align: center;display: block; font-size:20px;" href="{% url 'book_issue_list' %}" class="btn btn-xs btn-success"><i class="fas fa-long-arrow-alt-left"></i> Done</a>
     </div>
-    <!--/.col-->
+
+
 </div>
-{% endblock content %} {% block scripts %}
-<script>
-    $(function() {
-        $("#datetimepicker1").datetimepicker({
-            format: 'DD/MM/YYYY HH:mm',
-        });
-    });
-</script>
-{% endblock scripts %}
+{% else %}
+<p>There are no description for {{object}}</p>
+{% endif %} {% endblock content %}

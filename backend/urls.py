@@ -1,34 +1,5 @@
 from django.urls import path
 from .views import * 
-#     book_list,
-#     add_book,
-#     login_page,
-#     logout_page,
-#     member_list,
-#     book_issue_list,
-#     book_issue,
-#     add_member,
-#     edit_book,
-#     book_issue_edit,
-#     BookDeleteView,
-#     BookIssueDeleteView,
-#     MemberDeleteView,
-#     edit_member,
-#     book_return_list,
-#     BookReturnDeleteView,
-#     book_return,
-#     book_return_edit,
-#     book_renew_list,
-#     book_renew,
-#     BookRenewDeleteView,
-#     book_renew_edit,
-#     view_book,
-#     book_issue_detail,
-#     book_return_detail,
-#     member_detail,
-#     book_renew_detail,
-#     BookIssueCreateView
-#     )
 urlpatterns = [
     #-------------------------------- login logout url -----------------------------------------
     path('login/', login_page, name='login'),
@@ -57,7 +28,8 @@ urlpatterns = [
     path('del_book_issue/<int:pk>', BookIssueDeleteView.as_view(), name='del_book_issue'),
 
     #------------------------------------ book return url ---------------------------------------------
-    path('book_return/', book_return, name='book_return'),
+    # path('book_return/', book_return, name='book_return'),
+    path('<int:pk>/return/',BookReturnView.as_view(),name='book-return'),
     path('book_return_list/', book_return_list, name = 'book_return_list'),
     path('book_return_edit/<int:pk>', book_return_edit, name='book_return_edit'),
     path('book_return_detail/<int:pk>', book_return_detail, name='book_return_detail'),

@@ -75,12 +75,12 @@ def get_expiry():
 class BookIssue(models.Model):
     class Meta:
         verbose_name_plural = 'Book Issue'
-    issue_id=models.ForeignKey(Issue,on_delete=models.CASCADE)
-    title = models.CharField(max_length=200)
-    isbn = models.ForeignKey(BookEntry, on_delete=models.CASCADE)
+    issue_id = models.ForeignKey(Issue, on_delete=models.CASCADE)
+    title = models.ForeignKey(BookEntry, on_delete=models.CASCADE)
+    isbn = models.CharField(max_length=200)
     quantity = models.IntegerField()
-    member_name = models.CharField(max_length=200)
-    member_id = models.ForeignKey(Member, on_delete=models.CASCADE)
+    # member_name = models.CharField(max_length=200)
+    # member_id = models.ForeignKey(Member, on_delete=models.CASCADE)
     issue_date = models.DateTimeField(auto_now_add=True)
     expirydate = models.DateField(default=get_expiry)
     
