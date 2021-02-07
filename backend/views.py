@@ -11,6 +11,8 @@ from django.forms import widgets
 from django.forms import inlineformset_factory
 from .models import *
 from .forms import *
+from django.contrib.auth.models import User
+
 
 #----------------------------------------- login and logour views --------------------------------------
 def login_page(request):
@@ -195,13 +197,13 @@ class BookIssueCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
     def get_initial(self):
         initial=super(BookIssueCreateView,self).get_initial()
-<<<<<<< HEAD
+
         initial['member']=Member.objects.get(pk=self.kwargs['pk'])
         
-=======
+
         initial['member'] = Member.objects.get(pk=self.kwargs['pk'])
         # initial['member_id']=Member.objects.get(pk=self.kwargs['pk'])
->>>>>>> 0f440745dcd3b74c34182e58054f66a3ac0842ec
+ # 0f440745dcd3b74c34182e58054f66a3ac0842ec
         return initial
 
 # def book_issue(request):
@@ -231,7 +233,7 @@ class BookIssueCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
 def book_issue_edit(request, issue_id):
     book_instance = Issue.objects.get(id=issue_id)
-    form = IssueForm(request.POST,instance=book_instance, include=['member_name',])   
+    form = IssueForm(request.POST,instance=book_instance)
     ItemFormset = inlineformset_factory(Issue, BookIssue, form=IssueForm, extra=0)
     if request.method == 'POST':
         formset = ItemFormset(data = request.POST, files = request.FILES, instance=book_instance)
@@ -281,7 +283,8 @@ class BookReturnView(LoginRequiredMixin,DetailView,UpdateView):
     def form_valid(self, form):
         context = self.get_context_data()
         full_name=context['object']
-        member_id=Member.objects.get(full_name=full_name)
+        user_id=User.objects.get(username=full_name)
+        member_id=Member.objects.get(full_name=user_id)
         issue_id=Issue.objects.get(member_id=member_id)
         items = context['items']
         with transaction.atomic():
@@ -290,13 +293,14 @@ class BookReturnView(LoginRequiredMixin,DetailView,UpdateView):
                 for i in items:
                     title = i.cleaned_data['title']
                     qt=i.cleaned_data['quantity']
-                    book=title.title
-                    issue_item_id = BookIssue.objects.filter(issue_id_id=issue_id, book_id=title.id)
+                    isbn=i.cleaned_data['isbn']
+                    print(title)
+                    issue_item_id = BookIssue.objects.filter(issue_id_id=issue_id, isbn=isbn)
                     for i in issue_item_id:
                         i.quantity -= qt
                         i.save()
                         issued_item=BookEntry.objects.get(title=title)
-                        issued_item.Quantity +=qt
+                        issued_item.quantity +=qt
                         issued_item.save()
         return super(BookReturnView, self).form_valid(form)
 
