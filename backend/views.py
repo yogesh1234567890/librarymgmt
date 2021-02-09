@@ -284,15 +284,10 @@ class BookReturnView(LoginRequiredMixin,DetailView,UpdateView):
         context = self.get_context_data()
         full_name=context['object']
         user_id=User.objects.get(username=full_name)
-<<<<<<< HEAD
         member_id=Member.objects.get(user=user_id)
-        issue_id=Issue.objects.get(member_id=member_id)
-=======
-        member_id = Member.objects.get(full_name=user_id)
         print(member_id)
         issue_id = Issue.objects.get(member_id=member_id)
         print(issue_id)
->>>>>>> f1da85f5c69379cebd310804b19b8172aa07b45e
         items = context['items']
         with transaction.atomic():
             if items.is_valid():
@@ -302,13 +297,13 @@ class BookReturnView(LoginRequiredMixin,DetailView,UpdateView):
                     qt=i.cleaned_data['quantity']
                     isbn=i.cleaned_data['isbn']
                     print(title)
-                    issue_item_id = BookIssue.objects.filter(issue_id_id=issue_id, isbn=isbn)
-                    for i in issue_item_id:
-                        i.quantity -= qt
-                        i.save()
-                        issued_item=BookEntry.objects.get(title=title)
-                        issued_item.quantity +=qt
-                        issued_item.save()
+                    # issue_item_id = BookIssue.objects.filter(issue_id_id=issue_id, isbn=isbn)
+                    # for i in issue_item_id:
+                    #     i.quantity -= qt
+                    #     i.save()
+                    issued_item=BookEntry.objects.get(title=title)
+                    issued_item.quantity +=qt
+                    issued_item.save()
         return super(BookReturnView, self).form_valid(form)
 
 # def book_return(request):
