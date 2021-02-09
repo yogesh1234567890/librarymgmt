@@ -284,7 +284,7 @@ class BookReturnView(LoginRequiredMixin,DetailView,UpdateView):
         context = self.get_context_data()
         full_name=context['object']
         user_id=User.objects.get(username=full_name)
-        member_id=Member.objects.get(full_name=user_id)
+        member_id=Member.objects.get(user=user_id)
         issue_id=Issue.objects.get(member_id=member_id)
         items = context['items']
         with transaction.atomic():
