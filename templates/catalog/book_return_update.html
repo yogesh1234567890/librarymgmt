@@ -106,7 +106,7 @@
     let birdForm = document.querySelectorAll(".formset_row")
     let container = document.querySelector("#form-container")
     let addButton = document.querySelector("#add-form")
-    let totalForms = document.querySelector("#id_salesitem_set-TOTAL_FORMS")
+    let totalForms = document.querySelector("#id_bookissue_set-TOTAL_FORMS")
     let tbody = document.querySelector('.tbody-class')
     document.querySelector('.add-row').style.display = "none";
 
@@ -117,11 +117,11 @@
     function addForm(e) {
         e.preventDefault()
         let newForm = birdForm[0].cloneNode(true)
-        let formRegex = RegExp(`salesitem_set-(\\d){1}-`, 'g')
+        let formRegex = RegExp(`bookissue_set-(\\d){1}-`, 'g')
         formNum++
-        newForm.innerHTML = newForm.innerHTML.replace(formRegex, `salesitem_set-${formNum}-`)
+        newForm.innerHTML = newForm.innerHTML.replace(formRegex, `bookissue_set-${formNum}-`)
         tbody.appendChild(newForm)
-        totalForms.setAttribute('value', `${formNum + 1}`)
+        totalForms.setAttribute('value', `${formNum+1}`)
 
     }
 </script>
