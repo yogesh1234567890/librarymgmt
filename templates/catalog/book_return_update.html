@@ -21,7 +21,6 @@
                     <tr>
                         <th>Title</th>
                         <th>Quantity</th>
-                        <th>ISBN</th>
                         <th>Expiry Date</th>
                     </tr>
                 </thead>
@@ -31,7 +30,6 @@
                     <tr>
                         <td>{{ saleitem.title }}</td>
                         <td>{{saleitem.quantity}}</td>
-                        <td>{{saleitem.isbn}}</td>
                         <td>{{saleitem.expirydate}}</td>
 
                     </tr>
@@ -123,7 +121,7 @@
         formNum++
         newForm.innerHTML = newForm.innerHTML.replace(formRegex, `bookissue_set-${formNum}-`)
         tbody.appendChild(newForm)
-        totalForms.setAttribute('value', `${formNum + 1}`)
+        totalForms.setAttribute('value', `${formNum+1}`)
 
     }
 </script>
